@@ -245,6 +245,7 @@
     const meta = [
       g.model,
       g.views > 1 ? `${g.views} views` : "",
+      g.provider,
       g.cost != null ? `$${Number(g.cost).toFixed(4)}` : "",
     ]
       .filter(Boolean)
@@ -274,7 +275,13 @@
           ])
         );
         const started = Date.now();
-        ticker = setInterval(() => (elapsed.textContent = `${Math.round((Date.now() - started) / 1000)}s`), 1000);
+        ticker = setInterval(() => {
+          const secs = Math.round((Date.now() - started) / 1000);
+          elapsed.textContent = `${secs}s`;
+          // The background gives up after 4 minutes; if we hear nothing by
+          // then, it was stopped before it could report back.
+          if (secs > 300) show(el("div", { className: "err", textContent: "No response from the extension. Try again." }));
+        }, 1000);
         break;
       }
       case "result":

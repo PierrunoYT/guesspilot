@@ -11,6 +11,9 @@ const DEFAULTS = {
 const VIEW_SETTLE_MS = 1200;
 
 const REQUEST_TIMEOUT_MS = 4 * 60 * 1000;
+// Google's discounted "Flex" tier queues requests and can take minutes to
+// answer; OpenRouter favours it by default because it's cheaper.
+const SLOW_PROVIDERS = ["google-ai-studio/flex"];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -106,6 +109,7 @@ async function askModel(views, host, settings) {
     },
   };
   if (settings.reasoning !== "default") body.reasoning = { effort: settings.reasoning };
+  body.provider = { ignore: SLOW_PROVIDERS };
 
   let res;
   try {
@@ -137,6 +141,7 @@ async function askModel(views, host, settings) {
   const guess = parseJson(content);
   guess.model = data.model || settings.model;
   guess.cost = data.usage?.cost;
+  guess.provider = data.provider;
   return guess;
 }
 
