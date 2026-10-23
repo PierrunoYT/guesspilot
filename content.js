@@ -159,7 +159,10 @@
     hiddenGameUi = [];
   }
 
+  let ticker = null;
+
   function show(...nodes) {
+    clearInterval(ticker);
     restoreGameUi();
     body.replaceChildren(...nodes);
     host.style.display = "block";
@@ -260,14 +263,20 @@
         host.style.display = "none";
         hideGameUi();
         return nextFrame().then(() => true);
-      case "loading":
+      case "loading": {
+        const elapsed = el("span", { className: "muted" });
         show(
           el("div", {}, [
             el("span", { className: "spin" }),
             msg.views > 1 ? `Analyzing ${msg.views} views…` : "Analyzing location…",
+            " ",
+            elapsed,
           ])
         );
+        const started = Date.now();
+        ticker = setInterval(() => (elapsed.textContent = `${Math.round((Date.now() - started) / 1000)}s`), 1000);
         break;
+      }
       case "result":
         renderResult(msg.guess);
         break;

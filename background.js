@@ -10,9 +10,27 @@ const DEFAULTS = {
 // How long to let Street View load new tiles after turning the camera.
 const VIEW_SETTLE_MS = 1200;
 
+const REQUEST_TIMEOUT_MS = 4 * 60 * 1000;
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const running = new Set();
+
+// Firefox suspends an event page after ~30 s without incoming events, even in
+// the middle of a fetch, and the model often takes longer than that. Writing
+// to storage while a request runs fires storage.onChanged, which resets the
+// idle timer.
+let keepAliveTimer = null;
+browser.storage.onChanged.addListener(() => {});
+
+function keepAlive(on) {
+  if (on && !keepAliveTimer) {
+    keepAliveTimer = setInterval(() => browser.storage.local.set({ keepAlive: Date.now() }), 15000);
+  } else if (!on && keepAliveTimer) {
+    clearInterval(keepAliveTimer);
+    keepAliveTimer = null;
+  }
+}
 
 async function getSettings() {
   return { ...DEFAULTS, ...(await browser.storage.local.get(Object.keys(DEFAULTS))) };
@@ -89,15 +107,24 @@ async function askModel(views, host, settings) {
   };
   if (settings.reasoning !== "default") body.reasoning = { effort: settings.reasoning };
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${settings.apiKey}`,
-      "Content-Type": "application/json",
-      "X-Title": "GeoGuess AI",
-    },
-    body: JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${settings.apiKey}`,
+        "Content-Type": "application/json",
+        "X-Title": "GeoGuess AI",
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch (err) {
+    if (err?.name === "TimeoutError") {
+      throw new Error(`No answer from OpenRouter after ${REQUEST_TIMEOUT_MS / 60000} minutes. Try a lower reasoning effort.`);
+    }
+    throw new Error(`Couldn't reach OpenRouter: ${err?.message || err}`);
+  }
 
   const data = await res.json().catch(() => null);
   if (!res.ok || data?.error) {
@@ -308,6 +335,7 @@ async function captureViews(tab, settings) {
 async function analyze(tab) {
   if (running.has(tab.id)) return { error: "Already analyzing this tab." };
   running.add(tab.id);
+  keepAlive(true);
   const hasOverlay = await ensureOverlay(tab.id);
 
   try {
@@ -339,6 +367,7 @@ async function analyze(tab) {
     return { error };
   } finally {
     running.delete(tab.id);
+    if (!running.size) keepAlive(false);
   }
 }
 
