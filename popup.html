@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>GeoGuess AI</h1>
+
+  <button id="analyze" class="primary">Analyze this round</button>
+  <div id="status" class="muted">Shortcut: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd></div>
+
+  <label class="toggle">
+    <input id="autoPlace" type="checkbox">
+    <span class="track"></span>
+    Auto-place marker on the guess map
+  </label>
+
+  <details id="settings">
+    <summary>Settings</summary>
+    <label>OpenRouter API key
+      <input id="apiKey" type="password" placeholder="sk-or-..." autocomplete="off">
+    </label>
+    <label>Model
+      <input id="model" type="text">
+    </label>
+    <label>Reasoning effort
+      <select id="reasoning">
+        <option value="default">Model default</option>
+        <option value="low">Low (faster, cheaper)</option>
+        <option value="medium">Medium</option>
+        <option value="high">High (slower, better)</option>
+      </select>
+    </label>
+    <label>Max screenshot width (px)
+      <input id="maxWidth" type="number" min="512" max="3840" step="64">
+    </label>
+    <button id="save">Save</button>
+    <span id="saved" class="muted"></span>
+    <p class="muted">Get a key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>.</p>
+  </details>
+
+  <script src="popup.js"></script>
+</body>
+</html>
