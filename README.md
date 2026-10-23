@@ -23,9 +23,10 @@ Change the shortcut at `about:addons` → gear icon → **Manage Extension Short
 
 | Setting | Default | Notes |
 |---|---|---|
+| Look around | On | GeoGuessr only: turns the camera 90° three times so the model sees all 4 directions, each labelled with its compass heading. A few seconds slower, noticeably more accurate. |
 | Auto-place marker | On | Drops the pin on the guess map after each analysis. Saves as soon as you flip it. |
 | Model | `google/gemini-4-argon` | Any OpenRouter vision model ID works. |
-| Reasoning effort | Medium | Higher is slower and costs more but is usually more accurate. |
+| Reasoning effort | High | Lower is faster and cheaper but less accurate. |
 | Max screenshot width | 1600 px | Screenshots are downscaled to this before upload to save tokens. |
 
 The cost of each request (as reported by OpenRouter) is shown at the bottom of the overlay.

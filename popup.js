@@ -1,11 +1,13 @@
 const DEFAULTS = {
   apiKey: "",
   model: "google/gemini-4-argon",
-  reasoning: "medium",
+  reasoning: "high",
   maxWidth: 1600,
   autoPlace: true,
+  lookAround: true,
 };
-const FIELDS = Object.keys(DEFAULTS).filter((k) => k !== "autoPlace");
+const TOGGLES = ["autoPlace", "lookAround"];
+const FIELDS = Object.keys(DEFAULTS).filter((k) => !TOGGLES.includes(k));
 
 const $ = (id) => document.getElementById(id);
 const status = $("status");
@@ -18,14 +20,14 @@ function setStatus(text, cls = "") {
 async function load() {
   const settings = { ...DEFAULTS, ...(await browser.storage.local.get(Object.keys(DEFAULTS))) };
   for (const key of FIELDS) $(key).value = settings[key];
-  $("autoPlace").checked = settings.autoPlace;
+  for (const key of TOGGLES) $(key).checked = settings[key];
   if (!settings.apiKey) $("settings").open = true;
 }
 
-// The toggle saves immediately, no need to press Save.
-$("autoPlace").addEventListener("change", (e) => {
-  browser.storage.local.set({ autoPlace: e.target.checked });
-});
+// Toggles save immediately, no need to press Save.
+for (const key of TOGGLES) {
+  $(key).addEventListener("change", (e) => browser.storage.local.set({ [key]: e.target.checked }));
+}
 
 $("save").addEventListener("click", async () => {
   await browser.storage.local.set({

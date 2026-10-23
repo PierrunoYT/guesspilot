@@ -21,7 +21,7 @@
     }
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["prompt.js", "background.js"]
   },
   "action": {
     "default_title": "GeoGuess AI",

@@ -71,6 +71,12 @@
       ul { margin: 0; padding-left: 18px; }
       li { margin: 2px 0; }
       .alt { display: flex; justify-content: space-between; }
+      details { margin-top: 12px; }
+      summary {
+        cursor: pointer; font-size: 11px; text-transform: uppercase;
+        letter-spacing: .06em; color: #8a9aa8;
+      }
+      .reasoning { margin: 6px 0 0; color: #b9c7d2; white-space: pre-wrap; }
       .err { color: #ff8d8d; white-space: pre-wrap; }
       .spin {
         width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2);
@@ -133,7 +139,28 @@
     return node;
   }
 
+  // Game guess maps that would cover part of the scene in screenshots
+  // (WorldGuessr: #miniMapArea; GeoGuessr: the guess-map container).
+  const GAME_MAP_SELECTORS = '#miniMapArea, [data-qa="guess-map"], [class*="guess-map_guessMap"]';
+  let hiddenGameUi = [];
+
+  function hideGameUi() {
+    for (const node of document.querySelectorAll(GAME_MAP_SELECTORS)) {
+      hiddenGameUi.push([node, node.style.getPropertyValue("visibility"), node.style.getPropertyPriority("visibility")]);
+      node.style.setProperty("visibility", "hidden", "important");
+    }
+  }
+
+  function restoreGameUi() {
+    for (const [node, value, priority] of hiddenGameUi) {
+      if (value) node.style.setProperty("visibility", value, priority);
+      else node.style.removeProperty("visibility");
+    }
+    hiddenGameUi = [];
+  }
+
   function show(...nodes) {
+    restoreGameUi();
     body.replaceChildren(...nodes);
     host.style.display = "block";
   }
@@ -207,7 +234,18 @@
         )
       );
     }
-    const meta = [g.model, g.cost != null ? `$${Number(g.cost).toFixed(4)}` : ""].filter(Boolean).join(" · ");
+    if (g.reasoning) {
+      nodes.push(
+        el("details", {}, [el("summary", { textContent: "Reasoning" }), el("p", { className: "reasoning", textContent: g.reasoning })])
+      );
+    }
+    const meta = [
+      g.model,
+      g.views > 1 ? `${g.views} views` : "",
+      g.cost != null ? `$${Number(g.cost).toFixed(4)}` : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
     if (meta) nodes.push(el("div", { className: "muted", style: "margin-top:10px", textContent: meta }));
     show(...nodes);
   }
@@ -220,9 +258,15 @@
         return Promise.resolve(true);
       case "hide":
         host.style.display = "none";
+        hideGameUi();
         return nextFrame().then(() => true);
       case "loading":
-        show(el("div", {}, [el("span", { className: "spin" }), "Analyzing location…"]));
+        show(
+          el("div", {}, [
+            el("span", { className: "spin" }),
+            msg.views > 1 ? `Analyzing ${msg.views} views…` : "Analyzing location…",
+          ])
+        );
         break;
       case "result":
         renderResult(msg.guess);

@@ -15,6 +15,11 @@
     <span class="track"></span>
     Auto-place marker on the guess map
   </label>
+  <label class="toggle" title="Turns the camera to take 4 screenshots. More accurate, a few seconds slower. GeoGuessr only.">
+    <input id="lookAround" type="checkbox">
+    <span class="track"></span>
+    Look around (4 views, GeoGuessr)
+  </label>
 
   <details id="settings">
     <summary>Settings</summary>
@@ -29,7 +34,7 @@
         <option value="default">Model default</option>
         <option value="low">Low (faster, cheaper)</option>
         <option value="medium">Medium</option>
-        <option value="high">High (slower, better)</option>
+        <option value="high">High (slower, more accurate)</option>
       </select>
     </label>
     <label>Max screenshot width (px)
