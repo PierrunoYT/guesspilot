@@ -1,4 +1,4 @@
-# GeoGuess AI
+# GuessPilot
 
 A Firefox extension that looks at your current **GeoGuessr** or **WorldGuessr** round, asks **Gemini 4 Argon** (`google/gemini-4-argon`, via [OpenRouter](https://openrouter.ai)) where it is, and can drop the pin on the guess map for you.
 
@@ -24,7 +24,7 @@ The result appears in a draggable panel on the page: country, region, town, coor
 
 1. Open `about:debugging#/runtime/this-firefox`.
 2. Click **Load Temporary Add-on…** and choose `manifest.json` in this folder.
-3. Click the GeoGuess AI icon in the toolbar, open **Settings**, paste your OpenRouter key and click **Save**.
+3. Click the GuessPilot icon in the toolbar, open **Settings**, paste your OpenRouter key and click **Save**.
 
 Temporary add-ons are removed when Firefox restarts. To keep it installed permanently, either:
 
@@ -81,13 +81,13 @@ Toggles in the popup save immediately. The other settings need **Save**.
 |---|---|
 | "No OpenRouter API key set" | Open the popup → Settings → paste the key → Save. |
 | Stuck on "Analyzing…" for minutes | Make sure you're on the latest version (reload in `about:debugging`). Check which provider is shown after the next result. Set reasoning to Medium for faster answers. |
-| "Lost connection to GeoGuess AI" / "Receiving end does not exist" | The extension was reloaded after the page was opened. Refresh the page (F5). |
+| "Lost connection to GuessPilot" / "Receiving end does not exist" | The extension was reloaded after the page was opened. Refresh the page (F5). |
 | "Couldn't screenshot the tab" | Use Alt+Shift+G or the toolbar button. Firefox only allows screenshots right after those. |
 | "Couldn't find the guess map" | Make sure a round is open (not the results screen). Use the coordinates and place the pin yourself. |
 | `NS_ERROR_FILE_NOT_FOUND` when reloading | The folder was moved. Remove the add-on and load `manifest.json` again from the new location. |
 | CORS errors from `reddit.com`, `sentry` etc. in the console | Those come from the website itself (often blocked by tracking protection), not from this extension. |
 
-To see the extension's own logs, open `about:debugging`, click **Inspect** next to GeoGuess AI, and use the Console tab. While that window is open Firefox never suspends the background script, so timing problems may not reproduce there.
+To see the extension's own logs, open `about:debugging`, click **Inspect** next to GuessPilot, and use the Console tab. While that window is open Firefox never suspends the background script, so timing problems may not reproduce there.
 
 ## Costs
 
@@ -120,4 +120,8 @@ There's no build step: edit the files, then reload the extension in `about:debug
 
 ## See also
 
-**Photo Locator AI** (separate repo, `photo-locator`): the same approach for any image or video on the web.
+**WhereWasThis** (separate repo, `where-was-this`): the same approach for any image or video on the web.
+
+## License
+
+[MIT](LICENSE)

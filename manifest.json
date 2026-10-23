@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "GeoGuess AI",
+  "name": "GuessPilot",
   "version": "1.0.0",
   "description": "Screenshots a GeoGuessr / WorldGuessr round and asks Gemini 4 Argon (via OpenRouter) where it is.",
   "icons": {
@@ -24,7 +24,7 @@
     "scripts": ["prompt.js", "background.js"]
   },
   "action": {
-    "default_title": "GeoGuess AI",
+    "default_title": "GuessPilot",
     "default_popup": "popup.html",
     "default_icon": "icons/icon.svg"
   },
@@ -36,7 +36,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "geoguess-ai@local",
+      "id": "guesspilot@local",
       "strict_min_version": "128.0",
       "data_collection_permissions": {
         "required": ["websiteContent"]

@@ -118,7 +118,7 @@ async function askModel(views, host, settings) {
       headers: {
         Authorization: `Bearer ${settings.apiKey}`,
         "Content-Type": "application/json",
-        "X-Title": "GeoGuess AI",
+        "X-Title": "GuessPilot",
       },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
@@ -346,7 +346,7 @@ async function analyze(tab) {
   try {
     const settings = await getSettings();
     if (!settings.apiKey) {
-      throw new Error("No OpenRouter API key set. Click the GeoGuess AI toolbar button to add one.");
+      throw new Error("No OpenRouter API key set. Click the GuessPilot toolbar button to add one.");
     }
 
     // Hide our overlay and the game's guess map so they don't cover the scene.

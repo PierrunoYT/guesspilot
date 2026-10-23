@@ -1,15 +1,15 @@
 (() => {
-  if (window.__geoGuessAI) return;
-  window.__geoGuessAI = true;
+  if (window.__guessPilot) return;
+  window.__guessPilot = true;
 
-  const POS_KEY = "geoguess-ai-pos";
+  const POS_KEY = "guesspilot-pos";
 
   // Remove an overlay left behind by a previous (reloaded) copy of the extension;
   // its buttons can no longer reach the background script.
-  for (const stale of document.querySelectorAll("[data-geoguess-ai]")) stale.remove();
+  for (const stale of document.querySelectorAll("[data-guesspilot]")) stale.remove();
 
   const host = document.createElement("div");
-  host.setAttribute("data-geoguess-ai", "");
+  host.setAttribute("data-guesspilot", "");
   host.style.cssText = "all:initial;position:fixed;z-index:2147483647;top:80px;left:16px;display:none;";
   try {
     const saved = JSON.parse(localStorage.getItem(POS_KEY));
@@ -87,7 +87,7 @@
     </style>
     <div class="panel">
       <div class="head">
-        <span class="title">GEOGUESS AI</span>
+        <span class="title">GUESSPILOT</span>
         <button class="again" title="Analyze again (Alt+Shift+G)">Analyze</button>
         <button class="x" title="Close">×</button>
       </div>
@@ -107,7 +107,7 @@
     try {
       return await browser.runtime.sendMessage(msg);
     } catch (err) {
-      throw new Error(`Lost connection to GeoGuess AI (${err.message}). Refresh the page (F5) and try again.`);
+      throw new Error(`Lost connection to GuessPilot (${err.message}). Refresh the page (F5) and try again.`);
     }
   }
 
